@@ -47,32 +47,53 @@ function discover(fn) {
             var mainCharacteristic = characteristics[0];
             console.log('discovered heart rate characteristic for read', mainCharacteristic.uuid);
 
-		        mainCharacteristic.on('read', function(data) {
-		        	if(data){
-		        		var returnObj = {
-		        			heartRate : data.readUInt8(1)
-		        		};
-			          console.log('heart rate', returnObj.heartRate);
-		        		fn(returnObj);
-		        	}
-		        });
+            if(typeof window !== 'undefined' && window.device && window.device.platform === 'Android'){
+            	mainCharacteristic.on('notify', function(error, bytes) {
+	              //Check for data
+	              if (bytes.length === 0) {
+	                api.logIt('Subscription result had zero length data');
+	                return;
+	              }
 
-		        // true to enable notify
-		        mainCharacteristic.notify(true, function(error) {
-		          console.log('heart rate level notification on', error);
-		          if(error){
-		          	fn({
-		          		error : 'Unable to subscribe to heart rate'
-		          	});
-		          }
-		        });
+	              //Get the first byte that contains flags
+	              var flag = bytes[0];
 
-            /*mainCharacteristic.discoverDescriptors(function(error, descriptors) {
-            	descriptors[0].readValue(function(error, buffer){
-	              console.log('Read Value', buffer, typeof buffer);
-	             	console.log('Value', buffer.readUInt8());
-            	});
-            });*/
+	              //Check if u8 or u16 and get heart rate
+	              var hr;
+	              if ((flag & 0x01) === 1) {
+	                var u16bytes = bytes.buffer.slice(1, 3);
+	                var u16 = new Uint16Array(u16bytes)[0];
+	                hr = u16;
+	              } else {
+	                var u8bytes = bytes.buffer.slice(1, 2);
+	                var u8 = new Uint8Array(u8bytes)[0];
+	                hr = u8;
+	              }
+	              console.log('Heart Rate:: ' + hr);
+	              var returnObj = { heartRate : hr };
+	              fn(returnObj);
+	            });
+            }else{
+            	mainCharacteristic.on('read', function(data) {
+	              if (data) {
+	                var returnObj = {
+	                  heartRate: data.readUInt8(1)
+	                };
+	                console.log('heart rate', returnObj.heartRate);
+	                fn(returnObj);
+	              }
+	            });
+            }
+
+            // true to enable notify
+            mainCharacteristic.notify(true, function(error) {
+              console.log('heart rate level notification on', error);
+              if (error) {
+                fn({
+                  error: 'Unable to subscribe to heart rate'
+                });
+              }
+            });
           }
         });
       });
@@ -88,6 +109,7 @@ lib.init = function(opts, newApi) {
     discover(function(data) {
       if (!data) data = {};
       if (data.error) {
+        console.log('Error in Heartbeat Plugin' + JSON.stringify(data.error));
         api.logIt(data.error);
       } else {
         api.logHeartrate(data.heartRate);
