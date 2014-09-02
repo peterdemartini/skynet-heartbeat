@@ -1,6 +1,6 @@
 {
   "name": "skynet-heartbeat",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Skynet Gateblu and Mobiblu Heartbeat plugin",
   "main": "index.js",
   "scripts": {

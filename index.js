@@ -13,7 +13,8 @@ function Plugin(messenger, options, api, deviceName) {
         self.name = deviceName.name;
         self.uuid = deviceName.uuid;
     }else{
-        self.name = require('package.json').name;
+        self.name = require('./package.json').name;
+        // Use Test UUID
         self.uuid = 'ega98481-3d45-11fO-8982-6b4asd5f4sska';
     }
 

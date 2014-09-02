@@ -13,8 +13,13 @@ describe('Heart Rate Monitor', function(){
 		};
 	});
 	it('should log heart rate', function(done){
-		this.timeout(20 * 1000);
+		this.timeout(30 * 1000); // Try for 30 seconds
+		var count = 0;
 		api.logHeartrate = function(hr){
+			count++;
+			if(count < 5){
+				return;
+			}
 			assert(typeof hr === 'number');
 			assert(hr > 0);
 			done();
