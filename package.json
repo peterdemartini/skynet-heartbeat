@@ -1,0 +1,31 @@
+{
+  "name": "skynet-heartbeat",
+  "version": "0.0.1",
+  "description": "Skynet Gateblu and Mobiblu Heartbeat plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/peterdemartini/skynet-heartbeat.git"
+  },
+  "keywords": [
+    "Mobiblu",
+    "Gateblu",
+    "Skynet",
+    "Meshblu"
+  ],
+  "author": "Peter DeMartini",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/peterdemartini/skynet-heartbeat/issues"
+  },
+  "homepage": "https://github.com/peterdemartini/skynet-heartbeat",
+  "devDependencies": {
+    "gulp-rename": "~1.2.0",
+    "gulp": "~3.8.7",
+    "gulp-uglify": "~1.0.0",
+    "gulp-browserify": "~0.5.0"
+  }
+}
