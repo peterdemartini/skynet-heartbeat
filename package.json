@@ -1,6 +1,6 @@
 {
   "name": "skynet-heartbeat",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Skynet Gateblu and Mobiblu Heartbeat plugin",
   "main": "index.js",
   "scripts": {
@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "lodash": "~2.4.1",
-    "noble": "git://github.com/octoblu/noble"
+    "noble": "git://github.com/octoblu/noble",
+    "ws": "~0.4.32"
   }
 }
