@@ -24,7 +24,7 @@ function getPeripherals(fn) {
 }
 
 function discover(fn) {
-	function onRead(error, data) {
+	function onRead(data) {
 	  if (data) {
 	    var returnObj = {
 	      heartRate: data.readUInt8(1)
@@ -64,13 +64,9 @@ function discover(fn) {
             // Works on non-phonegap
             mainCharacteristic.on('read', onRead);
 
-            if(typeof window !== 'undefined' && typeof window.bluetoothle !== 'undefined'){
-  	            mainCharacteristic.read(function(){});
-            }
-
             // true to enable notify
             mainCharacteristic.notify(true, function(error) {
-              console.log('heart rate level notification on', error);
+              console.log('heart rate level notification');
               if (error) {
                 fn({
                   error: 'Unable to subscribe to heart rate'
