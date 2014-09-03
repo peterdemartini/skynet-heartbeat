@@ -24,13 +24,20 @@ function getPeripherals(fn) {
 }
 
 function discover(fn) {
-	function onRead(data) {
+	function getHeartrate(data){
+      if(data instanceof Uint8Array){
+        return data;
+      }else{
+        return data.readUInt8(1);
+      }
+  }
+  function onRead(data) {
 	  if (data) {
-	    var returnObj = {
-	      heartRate: data.readUInt8(1)
+	    var obj = {
+	      heartRate: getHeartrate(data)
 	    };
-	    console.log('heart rate', returnObj.heartRate);
-	    fn(returnObj);
+	    console.log('heart rate', obj.heartRate);
+	    fn(obj);
 	  } else {
 	    fn({
 	      error: 'Unable to read to heart rate'
