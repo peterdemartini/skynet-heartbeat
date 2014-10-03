@@ -20,7 +20,7 @@ function getPeripherals(fn) {
       return p;
     });
     fn();
-  });
+  }, api.logIt);
 }
 
 function discover(fn) {

@@ -1,30 +1,38 @@
 'use strict';
 
 var noble = require('noble');
+var stopandreturn, discover;
 
-var discover = function(peripheral){
+stopandreturn = function (){
+    noble.stopScanning();
+    noble.removeListener('discover', discover);
+    console.log('Stop Scanning for BLE devices...');
+    this.logIt(null, 'Stopped Scanning for Heartbeat Devices');
+    this.done(this.peripherals);
+};
+
+discover = function(peripheral){
     console.log('(scan)found: ' + peripheral.advertisement.localName);
+    this.logIt(null, 'Found Heartbeat Device : ' + peripheral.advertisement.localName);
     if(peripheral){
         this.peripherals.unshift(peripheral);
+        setTimeout(stopandreturn.bind(this), this.timeout);
     }else{
+        this.logIt('Invalid Peripheral');
         console.log('Invalid Peripheral');
     }
 };
 
-var stopandreturn = function (){
-    noble.stopScanning();
-    noble.removeListener('discover', discover);
-    console.log('Stop Scanning for BLE devices...');
-
-    this.done(this.peripherals);
-};
-
-module.exports = function (timeout, serviceUuids, peripherals, done) {
-    noble.on('discover', discover.bind({peripherals:peripherals}));
+module.exports = function (timeout, serviceUuids, peripherals, done, logIt) {
+    noble.on('discover', discover.bind({
+            peripherals:peripherals,
+            logIt: logIt,
+            timeout : timeout
+        }));
     if(!Array.isArray(serviceUuids)){
         serviceUuids = [serviceUuids];
     }
     noble.startScanning(serviceUuids);
     console.log('Scanning for BLE devices...');
-    setTimeout(stopandreturn.bind({done:done, peripherals:peripherals}), timeout);
+    logIt(null, 'Scanning for Heartbeat Devices');
 };
