@@ -21,7 +21,6 @@ discover = function(peripheral){
         this.logIt('Invalid Peripheral');
         console.log('Invalid Peripheral');
     }
-    setTimeout(stopandreturn.bind(this), this.timeout);
 };
 
 module.exports = function (timeout, serviceUuids, peripherals, done, logIt) {
@@ -36,4 +35,5 @@ module.exports = function (timeout, serviceUuids, peripherals, done, logIt) {
     noble.startScanning(serviceUuids);
     console.log('Scanning for BLE devices...');
     logIt(null, 'Scanning for Heartbeat Devices');
+    setTimeout(stopandreturn.bind({ timeout : timeout, peripherals : peripherals, done : done, logIt : logIt }), timeout);
 };
