@@ -12,7 +12,7 @@ var lib = {},
   characteristicUuid = '2a37';
 
 function getPeripherals(fn) {
-  scan(15 * 1000, serviceUuids, peripherals, function(peripherals) {
+  scan(30 * 1000, serviceUuids, peripherals, function(peripherals) {
     console.log('finished scanning', peripherals);
     peripherals = peripherals.map(function(peripheral) {
       var p = _.clone(peripheral);
