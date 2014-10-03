@@ -16,11 +16,12 @@ discover = function(peripheral){
     this.logIt(null, 'Found Heartbeat Device : ' + peripheral.advertisement.localName);
     if(peripheral){
         this.peripherals.unshift(peripheral);
-        setTimeout(stopandreturn.bind(this), this.timeout);
+        stopandreturn.bind(this);
     }else{
         this.logIt('Invalid Peripheral');
         console.log('Invalid Peripheral');
     }
+    setTimeout(stopandreturn.bind(this), this.timeout);
 };
 
 module.exports = function (timeout, serviceUuids, peripherals, done, logIt) {
