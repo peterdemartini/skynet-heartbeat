@@ -13,6 +13,5 @@ gulp.task('default', function() {
             debug : true
         }))
         .pipe(rename('bundle.js'))
-        .pipe(uglify())
         .pipe(gulp.dest('./'))
 });

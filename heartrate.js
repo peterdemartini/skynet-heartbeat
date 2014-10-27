@@ -11,6 +11,9 @@ var lib = {},
 
 function startMonitor(fn) {
   new Scanner(25 * 1000, serviceUuids, function(peripheral) {
+  	if(!peripheral){
+  		return fn({ error : 'No HeartRate Monitor Found' });
+  	}
     function getHeartrate(data) {
       if (data instanceof Uint8Array) {
         var bytes = data;
