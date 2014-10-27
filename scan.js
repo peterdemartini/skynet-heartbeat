@@ -1,47 +1,44 @@
 'use strict';
 
 var noble = require('noble');
+var stopandreturn, discover;
 
-function Scanner(timeout, serviceUuids, done, logIt) {
-	var self = this;
+stopandreturn = function() {
+  noble.stopScanning();
+  noble.removeListener('discover', discover);
+  console.log('Stop Scanning for BLE devices...');
+  this.logIt(null, 'Stopped Scanning for Heartbeat Devices');
+  this.done(this.peripherals);
+};
 
-	self.logIt = logIt;
+discover = function(peripheral) {
+  console.log('(scan)found: ' + peripheral.advertisement.localName);
+  this.logIt(null, 'Found Heartbeat Device : ' + peripheral.advertisement.localName);
+  if (peripheral) {
+    this.peripherals.unshift(peripheral);
+    stopandreturn.bind(this);
+  } else {
+    this.logIt('Invalid Peripheral');
+    console.log('Invalid Peripheral');
+  }
+};
 
-	self.peripheral = null;
-
-	self.done = done;
-
-  noble.on('discover', function (peripheral) {
-	  self.logEvent(null, 'Found Heartbeat Device : ' + peripheral.advertisement.localName);
-	  if (peripheral) {
-	  	self.peripheral = peripheral;
-	    self.stopScanning();
-	  } else {
-	    self.logEvent('Invalid Peripheral');
-	  }
-	});
+module.exports = function(timeout, serviceUuids, peripherals, done, logIt) {
+  noble.on('discover', discover.bind({
+    peripherals: peripherals,
+    logIt: logIt,
+    timeout: timeout
+  }));
   if (!Array.isArray(serviceUuids)) {
     serviceUuids = [serviceUuids];
   }
-  noble.startScanning(serviceUuids, true);
-
-  self.logEvent(null, 'Scanning for Heartbeat Devices');
-  setTimeout(self.stopScanning, timeout);
-}
-
-Scanner.prototype.logEvent = function (err, msg){
-	console.log(err || msg);
- 	this.logIt(err, msg);
+  noble.startScanning(serviceUuids);
+  console.log('Scanning for BLE devices...');
+  logIt(null, 'Scanning for Heartbeat Devices');
+  setTimeout(stopandreturn.bind({
+    timeout: timeout,
+    peripherals: peripherals,
+    done: done,
+    logIt: logIt
+  }), timeout);
 };
-
-Scanner.prototype.stopScanning = function() {
-	var self = this;
-  noble.stopScanning();
-  noble.removeAllListeners('discover');
-  if(!self.peripheral){
-  	self.logEvent(null, 'Stop Scanning for BLE devices...');
-  }
-  self.done(self.peripheral);
-};
-
-module.exports = Scanner;

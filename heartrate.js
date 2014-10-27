@@ -1,16 +1,30 @@
 'use strict';
 
-var Scanner = require('./scan');
+var scan = require('./scan'),
+  _ = require('lodash');
 
 var lib = {},
   options,
   api,
   serviceUuid = '180d',
   serviceUuids = [serviceUuid],
+  peripherals = [],
   characteristicUuid = '2a37';
 
-function startMonitor(fn) {
-  new Scanner(25 * 1000, serviceUuids, function(peripheral) {
+function getPeripherals(fn) {
+  scan(25 * 1000, serviceUuids, peripherals, function(peripherals) {
+    console.log('finished scanning', peripherals);
+    peripherals = peripherals.map(function(peripheral) {
+      var p = _.clone(peripheral);
+      delete p._noble;
+      return p;
+    });
+    fn();
+  }, api.logIt);
+}
+
+function discover(fn) {
+  _.each(peripherals, function(peripheral) {
     function getHeartrate(data) {
       if (data instanceof Uint8Array) {
         var bytes = data;
@@ -104,7 +118,7 @@ function startMonitor(fn) {
     }
 
     function readyForDisonnect() {
-      if (typeof document !== 'undefined') {
+      if (document) {
         document.addEventListener('pause', disonnect);
       }
     }
@@ -126,21 +140,23 @@ function startMonitor(fn) {
       connect();
     }
 
-  }, api.logIt);
+  });
 }
 
 lib.init = function(opts, newApi) {
   options = opts;
   api = newApi;
 
-  startMonitor(function(data) {
-    if (!data) data = {};
-    if (data.error) {
-      console.log('Error in Heartbeat Plugin: ' + JSON.stringify(data.error));
-      api.logIt(data.error);
-    } else {
-      api.logHeartrate(data.heartRate);
-    }
+  getPeripherals(function() {
+    discover(function(data) {
+      if (!data) data = {};
+      if (data.error) {
+        console.log('Error in Heartbeat Plugin: ' + JSON.stringify(data.error));
+        api.logIt(data.error);
+      } else {
+        api.logHeartrate(data.heartRate);
+      }
+    });
   });
 
 };
