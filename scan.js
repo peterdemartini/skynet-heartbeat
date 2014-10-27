@@ -30,7 +30,9 @@ Scanner.prototype.stopScanning = function() {
 	var self = this;
   noble.stopScanning();
   noble.removeListener('discover', self.discoverMonitor);
-  self.logEvent('Stop Scanning for BLE devices...');
+  if(!self.peripheral){
+  	self.logEvent('Stop Scanning for BLE devices...');
+  }
   self.done(self.peripheral);
 };
 
