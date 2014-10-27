@@ -117,7 +117,7 @@ function startMonitor(fn) {
     function connect() {
       peripheral.connect(onConnect);
     }
-
+    console.log('Peripheral', peripheral);
     if (peripheral.state === 'connected') {
       console.log('Already connected to peripheral');
       onConnect();
