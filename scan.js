@@ -13,7 +13,7 @@ function Scanner(timeout, serviceUuids, done, logIt) {
 		clearTimeout(self.timeout);
 	  noble.stopScanning();
 	  noble.removeAllListeners('discover');
-	  if(!self.peripheral){
+	  if(!peripheral){
 	  	self.logEvent(null, 'Stop Scanning for BLE devices...');
 	  }
 	  done(peripheral);
