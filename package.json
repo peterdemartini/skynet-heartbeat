@@ -30,7 +30,6 @@
     "mocha": "~1.21.4"
   },
   "dependencies": {
-    "lodash": "~2.4.1",
     "noble": "git://github.com/octoblu/noble",
     "ws": "~0.4.32"
   }
