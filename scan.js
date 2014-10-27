@@ -17,7 +17,7 @@ function Scanner(timeout, serviceUuids, done, logIt) {
   }
   noble.startScanning(serviceUuids);
 
-  self.logEvent('Scanning for Heartbeat Devices');
+  self.logEvent(null, 'Scanning for Heartbeat Devices');
   setTimeout(self.stopScanning, timeout);
 }
 
@@ -31,20 +31,19 @@ Scanner.prototype.stopScanning = function() {
   noble.stopScanning();
   noble.removeListener('discover', self.discoverMonitor);
   if(!self.peripheral){
-  	self.logEvent('Stop Scanning for BLE devices...');
+  	self.logEvent(null, 'Stop Scanning for BLE devices...');
   }
   self.done(self.peripheral);
 };
 
 Scanner.prototype.discoverMonitor = function (peripheral) {
 	var self = this;
-  self.logEvent('Found Heartbeat Device : ' + peripheral.advertisement.localName);
+  self.logEvent(null, 'Found Heartbeat Device : ' + peripheral.advertisement.localName);
   if (peripheral) {
   	self.peripheral = peripheral;
     self.stopScanning();
   } else {
-    self.logIt('Invalid Peripheral');
-    console.log('Invalid Peripheral');
+    self.logEvent('Invalid Peripheral');
   }
 };
 
