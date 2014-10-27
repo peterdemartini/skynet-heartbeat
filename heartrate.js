@@ -118,7 +118,7 @@ function discover(fn) {
     }
 
     function readyForDisonnect() {
-      if (document) {
+      if (typeof document !== 'undefined') {
         document.addEventListener('pause', disonnect);
       }
     }
